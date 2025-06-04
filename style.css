@@ -1,0 +1,82 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1e1e2f;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+  background: #2c2c3e;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 0 20px #00f0ff88;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+/* Mascota */
+.mascota {
+  position: relative;
+}
+
+.mascota img {
+  width: 150px;
+  margin-bottom: 1rem;
+  transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+/* Estados visuales */
+.mascota img.apagado {
+  filter: grayscale(100%) brightness(40%);
+}
+
+.mascota img.caliente {
+  filter: hue-rotate(0deg) brightness(1.2);
+  animation: parpadeo 0.8s infinite;
+}
+
+.mascota img.triste {
+  transform: translateY(5px) scale(0.95);
+  filter: sepia(0.7) hue-rotate(190deg) brightness(0.8);
+}
+
+@keyframes parpadeo {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.estado p {
+  margin: 0.5rem 0;
+}
+
+.acciones button {
+  margin: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #00c2ff;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.acciones button:hover {
+  transform: scale(1.05);
+  background-color: #00e6ff;
+}
+
+/* Botones deshabilitados */
+.acciones button:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+  transform: none;
+}

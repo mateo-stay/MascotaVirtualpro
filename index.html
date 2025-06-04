@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐾 Arduinito Pro - Mascota Virtual Fase Pro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🐱 Arduinito Pro</h1>
+    <div class="mascota">
+      <img src="assets/img/robot.png" alt="Mascota Virtual" id="img-mascota"/>
+      <div class="estado">
+        <p>🔋 Energía: <span id="energia">100</span>%</p>
+        <p>😄 Alegría: <span id="alegria">100</span>%</p>
+        <p>🌡️ Temperatura: <span id="temperatura">Normal</span></p>
+      </div>
+    </div>
+    <div class="acciones">
+      <button id="btn-recargar">🔌 Recargar</button>
+      <button id="btn-alimentar">🍪 Alimentar</button>
+      <button id="btn-jugar">🎮 Jugar</button>
+    </div>
+  </div>
+  <audio id="sonido-alerta" src="assets/sounds/alerta.mp3"></audio>
+  <audio id="sonido-feliz" src="assets/sounds/feliz.mp3"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
