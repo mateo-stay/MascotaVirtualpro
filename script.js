@@ -1,198 +1,218 @@
-// ---------------------------------------
-// Valores iniciales y recuperación de localStorage
-// ---------------------------------------
-let energia    = parseInt(localStorage.getItem('energia'))    || 100;
-let alegria    = parseInt(localStorage.getItem('alegria'))    || 100;
-let temperatura = localStorage.getItem('temperatura') || "Normal";
+/**
+ * Arduinito Tamagotchi-Pro
+ * - Hambre, Sed, Alegría, Limpieza, Salud
+ * - Ciclo Automático de deterioro
+ * - Botones: Alimentar, Agua, Jugar, Limpiar, Dormir
+ * - Evolución según edad
+ * - Día/Noche cambia background
+ * - Persistencia con localStorage
+ */
 
-// Elementos del DOM
-const spanEnergia    = document.getElementById("energia");
-const spanAlegria    = document.getElementById("alegria");
-const spanTemperatura = document.getElementById("temperatura");
-const imgMascota     = document.getElementById("img-mascota");
-const btnRecargar    = document.getElementById("btn-recargar");
-const btnAlimentar   = document.getElementById("btn-alimentar");
-const btnJugar       = document.getElementById("btn-jugar");
-const sonidoAlerta   = document.getElementById("sonido-alerta");
-const sonidoFeliz    = document.getElementById("sonido-feliz");
-const sonidoJuego    = document.getElementById("sonido-juego");
-const sonidoReaccion = document.getElementById("sonido-reaccion");
+(() => {
+  // Intervalos (en milisegundos)
+  const INTERVALO_CICLO = 10000;   // cada 10 segundos
+  const INTERVALO_EDAD = 1000;     // cada 1 segundo
 
-const divReaccion    = document.getElementById("reaccion");
-const contenedor     = document.querySelector(".container");
+  // Referencias al DOM
+  const imgMascota    = document.getElementById("img-mascota");
+  const txtEdad       = document.getElementById("texto-edad");
 
-const INTERVALO_VIDA = 10000; // cada 10 segundos el decaimiento
+  const barHambre     = document.getElementById("bar-hambre");
+  const barSed        = document.getElementById("bar-sed");
+  const barAlegria    = document.getElementById("bar-alegria");
+  const barLimpieza   = document.getElementById("bar-limpieza");
+  const barSalud      = document.getElementById("bar-salud");
 
-// ---------------------------------------
-// Función que actualiza pantalla y guarda estado
-// ---------------------------------------
-function actualizarPantalla() {
-  spanEnergia.textContent = energia;
-  spanAlegria.textContent = alegria;
-  spanTemperatura.textContent = temperatura;
+  const txtHambre     = document.getElementById("txt-hambre");
+  const txtSed        = document.getElementById("txt-sed");
+  const txtAlegria    = document.getElementById("txt-alegria");
+  const txtLimpieza   = document.getElementById("txt-limpieza");
+  const txtSalud      = document.getElementById("txt-salud");
+
+  const btnAlimentar  = document.getElementById("btn-alimentar");
+  const btnAgua       = document.getElementById("btn-agua");
+  const btnJugar      = document.getElementById("btn-jugar");
+  const btnLimpiar    = document.getElementById("btn-limpiar");
+  const btnDormir     = document.getElementById("btn-dormir");
+
+  // Estado guardado en localStorage
+  let estado = {
+    hambre:    100,
+    sed:       100,
+    alegria:   100,
+    limpieza:  100,
+    salud:     100,
+    creacion:  null // timestamp de creación
+  };
+
+  // Cargar del localStorage (o inicializar)
+  function cargarEstado() {
+    const guardado = localStorage.getItem("arduinito-estado");
+    if (guardado) {
+      estado = JSON.parse(guardado);
+    } else {
+      estado.creacion = Date.now();
+      localStorage.setItem("arduinito-estado", JSON.stringify(estado));
+    }
+  }
 
   // Guardar en localStorage
-  localStorage.setItem('energia', energia);
-  localStorage.setItem('alegria', alegria);
-  localStorage.setItem('temperatura', temperatura);
-
-  // Limpiar clases de estado
-  imgMascota.classList.remove("apagado", "caliente", "triste");
-
-  if (energia <= 0) {
-    // Mascota “apagada”
-    imgMascota.classList.add("apagado");
-    btnRecargar.disabled  = false; // solo recarga puede funcionar para reanimar
-    btnAlimentar.disabled = true;
-    btnJugar.disabled     = true;
-    spanTemperatura.textContent = "Apagado";
-    return;
+  function guardarEstado() {
+    localStorage.setItem("arduinito-estado", JSON.stringify(estado));
   }
 
-  // Si tiene energía > 0, todos los botones funcionan
-  btnRecargar.disabled  = false;
-  btnAlimentar.disabled = false;
-  btnJugar.disabled     = false;
-
-  // Ajuste de temperatura según nivel de energía
-  if (energia <= 20) {
-    temperatura = "Alta";
-    imgMascota.classList.add("caliente");
-    sonidoAlerta.currentTime = 0;
-    sonidoAlerta.play();
-  } else if (energia <= 50) {
-    temperatura = "Normal";
-    if (alegria <= 30) {
-      imgMascota.classList.add("triste");
+  // Actualizar fondo Día/Noche
+  function actualizarDiaNoche() {
+    const hora = new Date().getHours();
+    if (hora >= 6 && hora < 18) {
+      document.body.classList.add("day");
+      document.body.classList.remove("night");
+    } else {
+      document.body.classList.add("night");
+      document.body.classList.remove("day");
     }
-  } else {
-    temperatura = "Fría";
   }
 
-  // Si la alegría alcanzó 100, reproducir sonido feliz
-  if (alegria === 100 && energia > 0) {
-    sonidoFeliz.currentTime = 0;
-    sonidoFeliz.play();
-  }
-}
+  // Calcular y mostrar edad y evolución
+  function actualizarEdadYEvolucion() {
+    const ahora = Date.now();
+    const diff = ahora - estado.creacion; // ms transcurridos
+    const segundos = Math.floor(diff / 1000);
+    txtEdad.textContent = `Edad: ${segundos} seg`;
 
-// ---------------------------------------
-// Decaimiento automático cada INTERVALO_VIDA
-// ---------------------------------------
-function decaerEstado() {
-  if (energia <= 0) return;
-  energia = Math.max(energia - 5, 0);
-  alegria = Math.max(alegria - 5, 0);
-  actualizarPantalla();
-}
+    // Quitar todas las clases de evolución
+    imgMascota.classList.remove("evol-baby", "evol-child", "evol-adult", "evol-elder");
 
-// ---------------------------------------
-// Funciones de interacción manual: recargar, alimentar, jugar
-// ---------------------------------------
-function recargar() {
-  // Permitir recarga aun si energía = 0 (reanimación)
-  energia = Math.min(energia + 25, 100);
-  actualizarPantalla();
-}
-
-function alimentar() {
-  if (energia <= 0) return;
-  alegria = Math.min(alegria + 25, 100);
-
-  // Si alegría llega a 100, efecto de celebración breve
-  if (alegria === 100) {
-    imgMascota.classList.add("feliz");
-    setTimeout(() => imgMascota.classList.remove("feliz"), 800);
+    // Determinar etapa:
+    // <120 s: bebé, 120–300 s: niño, 300–600 s: adulto, >600 s: anciano
+    if (diff < 120000) {
+      imgMascota.classList.add("evol-baby");
+    } else if (diff < 300000) {
+      imgMascota.classList.add("evol-child");
+    } else if (diff < 600000) {
+      imgMascota.classList.add("evol-adult");
+    } else {
+      imgMascota.classList.add("evol-elder");
+    }
   }
 
-  actualizarPantalla();
-}
+  // Actualizar las barras en pantalla
+  function actualizarBarras() {
+    barHambre.style.width   = `${estado.hambre}%`;   txtHambre.textContent   = `${estado.hambre} %`;
+    barSed.style.width      = `${estado.sed}%`;      txtSed.textContent      = `${estado.sed} %`;
+    barAlegria.style.width  = `${estado.alegria}%`;  txtAlegria.textContent  = `${estado.alegria} %`;
+    barLimpieza.style.width = `${estado.limpieza}%`; txtLimpieza.textContent = `${estado.limpieza} %`;
+    barSalud.style.width    = `${estado.salud}%`;    txtSalud.textContent    = `${estado.salud} %`;
 
-function jugar() {
-  if (energia <= 0) return;
-
-  // 1) Actualizar energía y alegría
-  energia = Math.max(energia - 20, 0);
-  alegria = Math.max(alegria - 15, 0);
-
-  // 2) Animación “bailar” y sonido de juego
-  imgMascota.classList.add("bailar");
-  sonidoJuego.currentTime = 0;
-  sonidoJuego.play();
-
-  imgMascota.addEventListener("animationend", () => {
-    imgMascota.classList.remove("bailar");
-  }, { once: true });
-
-  // 3) Si alegría = 100 tras jugar, efecto “feliz”
-  if (alegria === 100 && energia > 0) {
-    imgMascota.classList.add("feliz");
-    setTimeout(() => imgMascota.classList.remove("feliz"), 800);
+    // Si Salud ≤ 0: mascota “muerta”
+    if (estado.salud <= 0) {
+      imgMascota.classList.add("muerto");
+      btnAlimentar.disabled = true;
+      btnAgua.disabled      = true;
+      btnJugar.disabled     = true;
+      btnLimpiar.disabled   = true;
+      btnDormir.disabled    = false; // puede “dormir” para recuperarse
+    } else {
+      imgMascota.classList.remove("muerto");
+      btnAlimentar.disabled = false;
+      btnAgua.disabled      = false;
+      btnJugar.disabled     = false;
+      btnLimpiar.disabled   = false;
+      btnDormir.disabled    = false;
+    }
   }
 
-  // 4) Iniciar minijuego de reacción
-  startReaccion();
+  // Función de decaimiento automático
+  function decaerMetrics() {
+    if (estado.salud <= 0) return; // si ya murió, no decae más
 
-  // 5) Refrescar pantalla con nuevos valores
-  actualizarPantalla();
-}
+    // 1) Hambre y Sed bajan
+    estado.hambre   = Math.max(estado.hambre - 5, 0);
+    estado.sed      = Math.max(estado.sed - 5, 0);
+    // 2) Limpieza baja
+    estado.limpieza = Math.max(estado.limpieza - 3, 0);
 
-// ---------------------------------------
-// Mini-juego de reacción
-// ---------------------------------------
-function startReaccion() {
-  // Mostrar el círculo en posición aleatoria dentro de .container
-  const tamañoCírculo = divReaccion.offsetWidth; // 60px o 50px en móviles
-  const { width, height } = contenedor.getBoundingClientRect();
-  // Margen para que no se salga del borde:
-  const maxX = width  - tamañoCírculo;
-  const maxY = height - tamañoCírculo;
-  const randX = Math.floor(Math.random() * maxX);
-  const randY = Math.floor(Math.random() * maxY);
+    // 3) Si Hambre ≤20 o Sed ≤20 o Limpieza ≤20 ⇒ Salud baja
+    if (estado.hambre <= 20 || estado.sed <= 20 || estado.limpieza <= 20) {
+      estado.salud = Math.max(estado.salud - 7, 0);
+    }
 
-  // Posicionar y mostrar
-  divReaccion.style.left = randX + "px";
-  divReaccion.style.top  = randY + "px";
-  divReaccion.style.display = "block";
+    // 4) Alegría baja si no juegan
+    estado.alegria  = Math.max(estado.alegria - 4, 0);
 
-  // Tiempo máximo para clic (1.5 seg)
-  let reaccionActiva = true;
-  const timeoutID = setTimeout(() => {
-    reaccionActiva = false;
-    divReaccion.style.display = "none";
-  }, 1500);
-
-  // Listener de clic en el círculo
-  function alClickReaccion() {
-    if (!reaccionActiva) return;
-    reaccionActiva = false;
-    clearTimeout(timeoutID);
-    divReaccion.style.display = "none";
-
-    // Dar bonus de alegría
-    alegria = Math.min(alegria + 30, 100);
-    sonidoReaccion.currentTime = 0;
-    sonidoReaccion.play();
-
-    // Mini efecto “feliz” breve
-    imgMascota.classList.add("feliz");
-    setTimeout(() => imgMascota.classList.remove("feliz"), 800);
-
-    actualizarPantalla();
+    actualizarBarras();
+    guardarEstado();
   }
 
-  divReaccion.addEventListener("click", alClickReaccion, { once: true });
-}
+  // ---------- ACCIONES manuales ----------
 
-// ---------------------------------------
-// Eventos de botones
-// ---------------------------------------
-btnRecargar.addEventListener("click", recargar);
-btnAlimentar.addEventListener("click", alimentar);
-btnJugar.addEventListener("click", jugar);
+  function alimentar() {
+    if (estado.salud <= 0) return;
+    estado.hambre = Math.min(estado.hambre + 20, 100);
+    actualizarBarras();
+    guardarEstado();
+  }
 
-// ---------------------------------------
-// Iniciar ciclo automático y primera actualización
-// ---------------------------------------
-setInterval(decaerEstado, INTERVALO_VIDA);
-actualizarPantalla();
+  function darAgua() {
+    if (estado.salud <= 0) return;
+    estado.sed = Math.min(estado.sed + 20, 100);
+    actualizarBarras();
+    guardarEstado();
+  }
+
+  function jugar() {
+    if (estado.salud <= 0) return;
+    // Jugar consume algo de hambre y sed, pero eleva alegría
+    estado.hambre   = Math.max(estado.hambre - 7, 0);
+    estado.sed      = Math.max(estado.sed - 7, 0);
+    estado.alegria  = Math.min(estado.alegria + 20, 100);
+    // Si salud está baja, bajar salud extra
+    if (estado.salud <= 30) {
+      estado.salud = Math.max(estado.salud - 5, 0);
+    }
+    actualizarBarras();
+    guardarEstado();
+  }
+
+  function limpiar() {
+    if (estado.salud <= 0) return;
+    estado.limpieza = 100;
+    actualizarBarras();
+    guardarEstado();
+  }
+
+  function dormir() {
+    // Dormir restaura salud, pero gasta sed y algo de hambre
+    estado.hambre  = Math.max(estado.hambre - 5, 0);
+    estado.sed     = Math.max(estado.sed - 5, 0);
+    estado.salud   = Math.min(estado.salud + 30, 100);
+    actualizarBarras();
+    guardarEstado();
+  }
+
+  // ---------- INICIALIZACIÓN ----------
+
+  function iniciar() {
+    cargarEstado();
+    actualizarDiaNoche();
+    actualizarEdadYEvolucion();
+    actualizarBarras();
+
+    // Cada seg: actualizar edad/evolución
+    setInterval(actualizarEdadYEvolucion, INTERVALO_EDAD);
+    // Cada 10 s: decaer métricas
+    setInterval(decaerMetrics, INTERVALO_CICLO);
+    // Cada minuto: verificar día/noche
+    setInterval(actualizarDiaNoche, 60000);
+
+    // Asignar eventos a botones
+    btnAlimentar.addEventListener("click", alimentar);
+    btnAgua.addEventListener("click", darAgua);
+    btnJugar.addEventListener("click", jugar);
+    btnLimpiar.addEventListener("click", limpiar);
+    btnDormir.addEventListener("click", dormir);
+  }
+
+  // Arrancar todo al cargar la página
+  window.addEventListener("load", iniciar);
+})();

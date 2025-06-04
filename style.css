@@ -1,160 +1,202 @@
-/* -----------------------------------------------------
-   style.css (adaptado para móvil y mini-juego)
-   ----------------------------------------------------- */
+/* ---------------------------------------------------------
+   style.css (Arduinito Tamagotchi-Pro – Barras turquesa, 
+   botones azules y textos de barras alineados a la izquierda)
+   --------------------------------------------------------- */
 
+/* 1. Body y fondo con transición Día/Noche */
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
   background-color: #1e1e2f;
-  color: #ffffff;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  margin: 0;
-  overflow: hidden; /* Evita scroll al aparecer el círculo */
+  min-height: 100vh;
+  overflow: hidden;
+  transition: background-color 0.8s ease;
 }
 
+/* Clases que se asignan dinámicamente en JS */
+body.day {
+  background-color: #87ceeb; /* cielo diurno */
+}
+body.night {
+  background-color: #0b1a2f; /* noche oscura */
+}
+
+/* 2. Container principal con card semitransparente y sombra suave */
 .container {
-  text-align: center;
-  background: #2c2c3e;
-  padding: 1.5rem;
-  border-radius: 15px;
-  box-shadow: 0 0 20px #00f0ff88;
+  background: rgba(44, 44, 62, 0.95);
+  padding: 1.8rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   width: 90%;
-  max-width: 400px; /* ancho máximo en pantallas grandes */
+  max-width: 420px;
   box-sizing: border-box;
-  position: relative; /* Para posicionar el círculo de reacción relativo acá */
-}
-
-h1 {
-  margin-bottom: 1rem;
-  font-size: 1.6rem;
-}
-
-.mascota {
+  text-align: center;
   position: relative;
 }
 
-.mascota img {
-  width: 80%;
-  max-width: 200px;
-  height: auto;
+/* 3. Título con peso seminegro */
+h1 {
+  margin: 0 0 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 4. Mascota: imagen con animación de "flotación" */
+.mascota {
+  position: relative;
   margin-bottom: 1rem;
-  transition: filter 0.5s ease, transform 0.5s ease;
 }
 
-/* Estados visuales */
-.mascota img.apagado {
+.mascota img {
+  width: 75%;
+  max-width: 160px;
+  transition: transform 0.6s ease, filter 0.6s ease;
+  animation: flotar 4s ease-in-out infinite;
+}
+
+/* Animación de flotación suave */
+@keyframes flotar {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Texto de edad con opacidad más baja */
+.edad-texto {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+/* 5. Estado "muerto": filtro gris y ligera rotación */
+.mascota img.muerto {
   filter: grayscale(100%) brightness(40%);
+  transform: rotate(-10deg) scale(0.9);
+  animation: none;
 }
 
-.mascota img.caliente {
-  filter: hue-rotate(0deg) brightness(1.2);
-  animation: parpadeo 0.8s infinite;
+/* 6. Evolución por etapa: tamaño y filtros */
+.mascota img.evol-baby {
+  transform: scale(0.7);
+  filter: saturate(1.3) brightness(1.1);
+}
+.mascota img.evol-child {
+  transform: scale(0.9);
+  filter: saturate(1.1) brightness(1.15);
+}
+.mascota img.evol-adult {
+  transform: scale(1);
+  filter: none;
+}
+.mascota img.evol-elder {
+  transform: scale(0.9);
+  filter: sepia(0.5) brightness(0.8);
 }
 
-.mascota img.triste {
-  transform: translateY(5px) scale(0.95);
-  filter: sepia(0.7) hue-rotate(190deg) brightness(0.8);
+/* 7. Barras de estado: diseño moderno con bordes redondeados */
+.barras {
+  margin-bottom: 1rem;
 }
 
-/* Animación para cuando Arduinito baila */
-@keyframes bailar {
-  0%   { transform: rotate(0deg) scale(1); }
-  40%  { transform: rotate(20deg) scale(1.05); }
-  60%  { transform: rotate(-20deg) scale(1.05); }
-  100% { transform: rotate(0deg) scale(1); }
-}
-
-.mascota img.bailar {
-  animation: bailar 1s ease-in-out;
-}
-
-/* Efecto “feliz” cuando la alegría está al máximo */
-.mascota img.feliz {
-  filter: hue-rotate(50deg) brightness(1.3);
-  transform: scale(1.1);
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-
-/* Parpadeo cuando la temperatura es alta */
-@keyframes parpadeo {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-.estado p {
+.barra {
+  display: flex;
+  align-items: center;
   margin: 0.5rem 0;
-  font-size: 1rem;
 }
 
-/* Botones fluidos, en columna para móvil */
+/* Etiqueta de la barra: siempre alineada a la izquierda */
+.label {
+  width: 18%;
+  font-size: 0.85rem;
+  font-weight: 400;
+  text-align: left; /* fuerza alineación izquierda */
+}
+
+.fondo-barra {
+  background: #3c3c52;
+  width: 60%;
+  height: 14px;
+  border-radius: 7px;
+  margin: 0 0.5rem;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Todas las barras en turquesa sólido (#40E0D0) */
+.relleno {
+  width: 100%;
+  height: 100%;
+  background: #40E0D0;
+  transition: width 0.4s ease;
+}
+
+/* Porcentaje: alineado a la izquierda, con pequeño margen */
+.porcentaje {
+  width: 15%;
+  font-size: 0.85rem;
+  text-align: left; /* ahora alineado a la izquierda */
+  margin-left: 0.3rem; 
+}
+
+/* 8. Botones: estilo con color azul sólido y sombra interna */
 .acciones {
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .acciones button {
-  width: 100%;
-  padding: 0.7rem 1rem;
-  font-size: 1rem;
+  flex: 1 1 45%;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   border: none;
   border-radius: 8px;
-  background-color: #00c2ff;
-  color: white;
+  background-color: #0066cc; /* azul sólido */
+  color: #fff;
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
-  box-sizing: border-box;
-  touch-action: manipulation; /* Evita zoom / doble tap */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
+              0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  touch-action: manipulation;
 }
 
-.acciones button:hover {
+.acciones button:hover:not(:disabled) {
+  background-color: #005bb5; /* tono ligeramente más oscuro en hover */
   transform: scale(1.03);
-  background-color: #00e6ff;
 }
 
 .acciones button:disabled {
-  background-color: #444;
+  background-color: #555;
   cursor: not-allowed;
+  box-shadow: none;
   transform: none;
 }
 
-/* -----------------------------------------------------
-   Mini-juego: círculo de reacción
-   ----------------------------------------------------- */
-
-#reaccion {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #ffcc00;
-  position: absolute;
-  display: none;
-  touch-action: manipulation; /* Evita zoom / doble tap */
-  z-index: 10;
-  box-shadow: 0 0 10px #ffcc00aa;
-}
-
-/* -----------------------------------------------------
-   Media queries para pantallas muy pequeñas
-   ----------------------------------------------------- */
-
+/* 9. Responsive extra para pantallas muy chicas */
 @media (max-width: 360px) {
   h1 {
     font-size: 1.4rem;
   }
-  .estado p {
-    font-size: 0.9rem;
+  .label, .porcentaje {
+    font-size: 0.75rem;
   }
   .acciones button {
-    font-size: 0.9rem;
-    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.6rem;
   }
-  #reaccion {
-    width: 50px;
-    height: 50px;
+  .fondo-barra {
+    height: 12px;
+    border-radius: 6px;
+  }
+  .mascota img {
+    width: 70%;
   }
 }

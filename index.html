@@ -2,36 +2,78 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <!-- Meta viewport con bloqueo de zoom -->
+  <!-- Bloquear zoom/doble tap -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>🐾 Arduinito - Mascota Virtual</title>
+  <title>Arduinito</title>
+
+  <link rel="icon" href="assets/img/favicon-robot.png" type="image/png" />
+    <link rel="stylesheet" href="style.css" />
+
+  <!-- Google Font: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" 
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Arduinito</h1>
+
     <div class="mascota">
-      <img src="assets/img/robot.png" alt="Mascota Virtual" id="img-mascota"/>
-      <div class="estado">
-        <p>🔋 Energía: <span id="energia">100</span>%</p>
-        <p>😄 Alegría: <span id="alegria">100</span>%</p>
-        <p>🌡️ Temperatura: <span id="temperatura">Normal</span></p>
+      <img src="assets/img/robot.png" alt="Arduinito" id="img-mascota"/>
+      <div class="edad-texto" id="texto-edad">Edad: 0 segundos</div>
+    </div>
+
+    <div class="barras">
+      <div class="barra">
+        <span class="label">Hambre</span>
+        <div class="fondo-barra">
+          <div class="relleno" id="bar-hambre"></div>
+        </div>
+        <span class="porcentaje" id="txt-hambre">100 %</span>
+      </div>
+      <div class="barra">
+        <span class="label">Sed</span>
+        <div class="fondo-barra">
+          <div class="relleno" id="bar-sed"></div>
+        </div>
+        <span class="porcentaje" id="txt-sed">100 %</span>
+      </div>
+      <div class="barra">
+        <span class="label">Alegría</span>
+        <div class="fondo-barra">
+          <div class="relleno" id="bar-alegria"></div>
+        </div>
+        <span class="porcentaje" id="txt-alegria">100 %</span>
+      </div>
+      <div class="barra">
+        <span class="label">Limpieza</span>
+        <div class="fondo-barra">
+          <div class="relleno" id="bar-limpieza"></div>
+        </div>
+        <span class="porcentaje" id="txt-limpieza">100 %</span>
+      </div>
+      <div class="barra">
+        <span class="label">Salud</span>
+        <div class="fondo-barra">
+          <div class="relleno" id="bar-salud"></div>
+        </div>
+        <span class="porcentaje" id="txt-salud">100 %</span>
       </div>
     </div>
-    <div class="acciones">
-      <button id="btn-recargar">🔌 Recargar</button>
-      <button id="btn-alimentar">🍪 Alimentar</button>
-      <button id="btn-jugar">🎮 Jugar</button>
-    </div>
-    <!-- Mini-juego de reacción: círculo oculto -->
-    <div id="reaccion"></div>
-  </div>
 
-  <!-- Audios para efectos -->
-  <audio id="sonido-alerta" src="assets/sounds/alerta.mp3"></audio>
-  <audio id="sonido-feliz" src="assets/sounds/feliz.mp3"></audio>
-  <audio id="sonido-juego" src="assets/sounds/juego.mp3"></audio>
-  <audio id="sonido-reaccion" src="assets/sounds/reaccion.mp3"></audio>
+    <div class="acciones">
+      <button id="btn-alimentar">Alimentar</button>
+      <button id="btn-agua">Dar Agua</button>
+      <button id="btn-jugar">Jugar</button>
+      <button id="btn-limpiar">Limpiar</button>
+      <button id="btn-dormir">Dormir</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
