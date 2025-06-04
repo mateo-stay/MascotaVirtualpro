@@ -2,13 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🐾 Arduinito Pro - Mascota Virtual</title>
+  <!-- Meta viewport con bloqueo de zoom -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>🐾 Arduinito - Mascota Virtual</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🐱 Arduinito Pro</h1>
+    <h1>Arduinito</h1>
     <div class="mascota">
       <img src="assets/img/robot.png" alt="Mascota Virtual" id="img-mascota"/>
       <div class="estado">
@@ -22,9 +23,16 @@
       <button id="btn-alimentar">🍪 Alimentar</button>
       <button id="btn-jugar">🎮 Jugar</button>
     </div>
+    <!-- Mini-juego de reacción: círculo oculto -->
+    <div id="reaccion"></div>
   </div>
+
+  <!-- Audios para efectos -->
   <audio id="sonido-alerta" src="assets/sounds/alerta.mp3"></audio>
   <audio id="sonido-feliz" src="assets/sounds/feliz.mp3"></audio>
+  <audio id="sonido-juego" src="assets/sounds/juego.mp3"></audio>
+  <audio id="sonido-reaccion" src="assets/sounds/reaccion.mp3"></audio>
+
   <script src="script.js"></script>
 </body>
 </html>
