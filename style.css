@@ -12,27 +12,31 @@ body {
 .container {
   text-align: center;
   background: #2c2c3e;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 15px;
   box-shadow: 0 0 20px #00f0ff88;
+  width: 90%;
+  max-width: 400px; 
+  box-sizing: border-box;
 }
 
 h1 {
   margin-bottom: 1rem;
+  font-size: 1.6rem;
 }
 
-/* Mascota */
 .mascota {
   position: relative;
 }
 
 .mascota img {
-  width: 150px;
+  width: 80%;
+  max-width: 200px;
+  height: auto;
   margin-bottom: 1rem;
   transition: filter 0.5s ease, transform 0.5s ease;
 }
 
-/* Estados visuales */
 .mascota img.apagado {
   filter: grayscale(100%) brightness(40%);
 }
@@ -55,11 +59,19 @@ h1 {
 
 .estado p {
   margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
 }
 
 .acciones button {
-  margin: 0.5rem;
-  padding: 0.7rem 1.2rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
   font-size: 1rem;
   border: none;
   border-radius: 8px;
@@ -67,16 +79,29 @@ h1 {
   color: white;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
+  box-sizing: border-box;
 }
 
 .acciones button:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
   background-color: #00e6ff;
 }
 
-/* Botones deshabilitados */
 .acciones button:disabled {
   background-color: #444;
   cursor: not-allowed;
   transform: none;
+}
+
+@media (max-width: 360px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+  .estado p {
+    font-size: 0.9rem;
+  }
+  .acciones button {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
 }
